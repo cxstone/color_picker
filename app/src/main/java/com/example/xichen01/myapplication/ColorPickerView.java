@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -23,16 +24,9 @@ public class ColorPickerView extends View {
     private int width;
     private int height;
     private int pickColor;
-    private int boderWidth;
-
-    public int getPickColor() {
-        return pickColor;
-    }
-
-    public void setPickColor(int pickColor) {
-        this.pickColor = pickColor;
-        this.invalidate();
-    }
+    private int borderColor;
+    private float borderWidth;
+    private float barY;
 
     public ColorPickerView(Context context) {
         super(context);
@@ -52,11 +46,30 @@ public class ColorPickerView extends View {
     private void init(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerView);
         pickColor = typedArray.getColor(R.styleable.ColorPickerView_pickColor, 0XFFFFFFFF);
+        borderColor = typedArray.getColor(R.styleable.ColorPickerView_borderColor, 0XFFFFFFFF);
+        borderWidth = typedArray.getDimension(R.styleable.ColorPickerView_borderWidth, 0);
         typedArray.recycle();
 
-        boderWidth = 4;
         paint = new Paint();
         paint.setAntiAlias(true);
+    }
+
+    //设置选择器颜色
+    public void setPickColor(int pickColor) {
+        this.pickColor = pickColor;
+        this.invalidate();
+    }
+
+    //设置选择器边框宽度
+    public void setBorderWidth(float borderWidth) {
+        this.borderWidth = borderWidth <= 0 ? 0 : borderWidth;
+        this.invalidate();
+    }
+
+    //设置选择器边框颜色
+    public void setBorderColor(int borderColor) {
+        this.borderColor = borderColor;
+        this.invalidate();
     }
 
     @Override
@@ -64,6 +77,7 @@ public class ColorPickerView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         width = getWidth();
         height = getHeight();
+        barY = height;
     }
 
     @Override
@@ -78,12 +92,31 @@ public class ColorPickerView extends View {
         paint.reset();
 
         //画边框
-        if (boderWidth > 0) {
-            paint.setStrokeWidth(boderWidth);
+        if (borderWidth > 0) {
+            paint.setStrokeWidth(borderWidth);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.BLACK);
-            canvas.drawRect(boderWidth / 2, boderWidth / 2, width - boderWidth / 2, height - boderWidth / 2, paint);
+            paint.setColor(borderColor);
+            canvas.drawRect(borderWidth / 2, borderWidth / 2, width - borderWidth / 2, height - borderWidth / 2, paint);
             paint.reset();
         }
+
+        //画滑块
+        paint.setColor(Color.YELLOW);
+        canvas.drawCircle(width / 2, barY, width / 2, paint);
+        paint.reset();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float y = event.getY();
+        if (y < 0) {
+            barY = 0;
+        } else if (y > height) {
+            barY = height;
+        } else {
+            barY = y;
+        }
+        invalidate();
+        return true;
     }
 }

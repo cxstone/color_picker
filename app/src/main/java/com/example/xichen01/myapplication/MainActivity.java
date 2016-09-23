@@ -3,8 +3,12 @@ package com.example.xichen01.myapplication;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ColorPickerView cpvPickerColor;
@@ -17,15 +21,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cpvPickerColor = (ColorPickerView) findViewById(R.id.cpv_color_picker);
         btn1 = (Button) findViewById(R.id.btn_1);
         btn2 = (Button) findViewById(R.id.btn_2);
         btn3 = (Button) findViewById(R.id.btn_3);
         btn4 = (Button) findViewById(R.id.btn_4);
+        cpvPickerColor = (ColorPickerView) findViewById(R.id.cpv_color_picker);
+
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
         btn3.setOnClickListener(this);
         btn4.setOnClickListener(this);
+        cpvPickerColor.setBorderWidth(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
+        cpvPickerColor.setBorderColor(Color.parseColor("#0000FF"));
     }
 
     @Override

@@ -3,5 +3,7 @@
 
     <declare-styleable name="ColorPickerView">
         <attr name="pickColor" format="color" />
+        <attr name="borderColor" format="color" />
+        <attr name="borderWidth" format="dimension" />
     </declare-styleable>
 </resources>
