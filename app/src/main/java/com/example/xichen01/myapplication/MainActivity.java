@@ -3,10 +3,10 @@ package com.example.xichen01.myapplication;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, ColorPickerView.ColorPickerViewListener {
     private ColorPickerView cpvPickerColor;
@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btn2;
     private Button btn3;
     private Button btn4;
+    private TextView tvPickedColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn3 = (Button) findViewById(R.id.btn_3);
         btn4 = (Button) findViewById(R.id.btn_4);
         cpvPickerColor = (ColorPickerView) findViewById(R.id.cpv_color_picker);
+        tvPickedColor = (TextView) findViewById(R.id.tv_picked_color);
 
         btn1.setOnClickListener(this);
         btn2.setOnClickListener(this);
@@ -38,21 +40,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.btn_1) {
-            cpvPickerColor.setPickColor(Color.parseColor("#FF0000"));
+            cpvPickerColor.setStartPickColor(Color.parseColor("#FF0000"));
         } else if (id == R.id.btn_2) {
-            cpvPickerColor.setPickColor(Color.parseColor("#00FF00"));
+            cpvPickerColor.setStartPickColor(Color.parseColor("#00FF00"));
         } else if (id == R.id.btn_3) {
-            cpvPickerColor.setPickColor(Color.parseColor("#0000FF"));
+            cpvPickerColor.setStartPickColor(Color.parseColor("#0000FF"));
         } else if (id == R.id.btn_4) {
-            cpvPickerColor.setPickColor(Color.parseColor("#ae99dd"));
+            cpvPickerColor.setStartPickColor(Color.parseColor("#ae99dd"));
         }
     }
 
     @Override
-    public void touchCoordinate(float total, float position) {
-        //根据Y坐标获取渐变中的颜色
-        int startColor = cpvPickerColor.getPickColor();
-        int endColor = Color.parseColor("#FFFFFF");
-        Log.d("总长度与当前位置", total + " - " + position);
+    public void getPickedColor(int pickedColor) {
+        tvPickedColor.setBackgroundColor(pickedColor);
     }
+
+
 }

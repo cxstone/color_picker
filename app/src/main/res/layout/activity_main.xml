@@ -46,11 +46,26 @@
 
     </LinearLayout>
 
-    <com.example.xichen01.myapplication.ColorPickerView
-        android:id="@+id/cpv_color_picker"
-        android:layout_width="20dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        app:pickColor="#FF0000" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <com.example.xichen01.myapplication.ColorPickerView
+            android:id="@+id/cpv_color_picker"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            app:seekBarColor="#FF6600"
+            app:startPickColor="#FF0000" />
+
+        <TextView
+            android:id="@+id/tv_picked_color"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="48dp" />
+    </LinearLayout>
+
 
 </LinearLayout>

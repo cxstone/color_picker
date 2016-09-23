@@ -24,7 +24,9 @@ public class ColorPickerView extends View {
     private Paint paint;
     private int width;
     private int height;
-    private int pickColor;
+    private int startPickColor;
+    private int endPickColor;
+    private int seekBarColor;
     private int borderColor;
     private float borderWidth;
     private float barY;
@@ -46,8 +48,10 @@ public class ColorPickerView extends View {
 
     private void init(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerView);
-        pickColor = typedArray.getColor(R.styleable.ColorPickerView_pickColor, 0XFFFFFFFF);
+        startPickColor = typedArray.getColor(R.styleable.ColorPickerView_startPickColor, 0XFFFFFFFF);
+        endPickColor = typedArray.getColor(R.styleable.ColorPickerView_endPickColor, 0XFFFFFFFF);
         borderColor = typedArray.getColor(R.styleable.ColorPickerView_borderColor, 0XFFFFFFFF);
+        seekBarColor = typedArray.getColor(R.styleable.ColorPickerView_seekBarColor, 0XFFFFFFFF);
         borderWidth = typedArray.getDimension(R.styleable.ColorPickerView_borderWidth, 0);
         typedArray.recycle();
 
@@ -59,14 +63,24 @@ public class ColorPickerView extends View {
         this.listener = listener;
     }
 
-    //设置选择器颜色
-    public void setPickColor(int pickColor) {
-        this.pickColor = pickColor;
+    //设置选择器渐变开始颜色
+    public void setStartPickColor(int startPickColor) {
+        this.startPickColor = startPickColor;
         this.invalidate();
     }
 
-    public int getPickColor() {
-        return this.pickColor;
+    public int getStartPickColor() {
+        return this.startPickColor;
+    }
+
+    //设置选择器渐变结束颜色
+    public void setEndPickColor(int endPickColor) {
+        this.endPickColor = endPickColor;
+        this.invalidate();
+    }
+
+    public int getEndPickColor() {
+        return this.endPickColor;
     }
 
     //设置选择器边框宽度
@@ -78,6 +92,11 @@ public class ColorPickerView extends View {
     //设置选择器边框颜色
     public void setBorderColor(int borderColor) {
         this.borderColor = borderColor;
+        this.invalidate();
+    }
+
+    public void setSeekBarColor(int seekBarColor) {
+        this.seekBarColor = seekBarColor;
         this.invalidate();
     }
 
@@ -95,7 +114,7 @@ public class ColorPickerView extends View {
 
         //画渐变
         Rect rect = new Rect(0, 0, width, height);
-        Shader shader = new LinearGradient(0, height, 0, 0, pickColor, 0XFFFFFFFF, Shader.TileMode.MIRROR);
+        Shader shader = new LinearGradient(0, height, 0, 0, startPickColor, endPickColor, Shader.TileMode.MIRROR);
         paint.setShader(shader);
         canvas.drawRect(rect, paint);
         paint.reset();
@@ -110,9 +129,13 @@ public class ColorPickerView extends View {
         }
 
         //画滑块
-        paint.setColor(Color.YELLOW);
+        paint.setColor(seekBarColor);
         canvas.drawCircle(width / 2, barY, width / 2, paint);
         paint.reset();
+
+        if (listener != null) {
+            listener.getPickedColor(getPositionColor((height - barY) / height, startPickColor, endPickColor));
+        }
     }
 
     @Override
@@ -126,13 +149,27 @@ public class ColorPickerView extends View {
             barY = y;
         }
         invalidate();
-        if (listener != null) {
-            listener.touchCoordinate(height, barY);
-        }
+//        if (listener != null) {
+//            listener.getPickedColor(getPositionColor((height - barY) / height, startPickColor, endPickColor));
+//        }
         return true;
     }
 
+    private int getPositionColor(float radio, int startColor, int endColor) {
+        int redStart = Color.red(startColor);
+        int blueStart = Color.blue(startColor);
+        int greenStart = Color.green(startColor);
+        int redEnd = Color.red(endColor);
+        int blueEnd = Color.blue(endColor);
+        int greenEnd = Color.green(endColor);
+
+        int red = (int) (redStart + ((redEnd - redStart) * radio + 0.5));
+        int greed = (int) (greenStart + ((greenEnd - greenStart) * radio + 0.5));
+        int blue = (int) (blueStart + ((blueEnd - blueStart) * radio + 0.5));
+        return Color.argb(255, red, greed, blue);
+    }
+
     public interface ColorPickerViewListener {
-        void touchCoordinate(float total, float position);
+        void getPickedColor(int pickedColor);
     }
 }
