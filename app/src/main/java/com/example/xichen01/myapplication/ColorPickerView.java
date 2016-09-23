@@ -20,6 +20,7 @@ import android.view.View;
  */
 
 public class ColorPickerView extends View {
+    private ColorPickerViewListener listener;
     private Paint paint;
     private int width;
     private int height;
@@ -54,10 +55,18 @@ public class ColorPickerView extends View {
         paint.setAntiAlias(true);
     }
 
+    public void setColorPickerViewListener(ColorPickerViewListener listener) {
+        this.listener = listener;
+    }
+
     //设置选择器颜色
     public void setPickColor(int pickColor) {
         this.pickColor = pickColor;
         this.invalidate();
+    }
+
+    public int getPickColor() {
+        return this.pickColor;
     }
 
     //设置选择器边框宽度
@@ -117,6 +126,13 @@ public class ColorPickerView extends View {
             barY = y;
         }
         invalidate();
+        if (listener != null) {
+            listener.touchCoordinate(height, barY);
+        }
         return true;
+    }
+
+    public interface ColorPickerViewListener {
+        void touchCoordinate(float total, float position);
     }
 }
